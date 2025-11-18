@@ -102,7 +102,7 @@ num  target     prot opt source               destination
 # Просмотр правил в определённой цепочке и таблице со статистикой пакетов
 
 ```bash
-s# iptables -t filter -L FORWARD --line-numbers -n -v
+# iptables -t filter -L FORWARD --line-numbers -n -v
 Chain FORWARD (policy DROP 0 packets, 0 bytes)
 num   pkts bytes target     prot opt in     out     source               destination         
 1      382 22440 DOCKER-USER  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
@@ -130,3 +130,68 @@ num   pkts bytes target     prot opt in     out     source               destina
 Chain INPUT (policy ACCEPT 35384 packets, 9401K bytes)
 num   pkts bytes target     prot opt in     out     source               destination
 ```
+
+# Логирование прохождения пакетов по цепочкам
+
+## Получаем список правил интересующей цепочки с номерами правил
+
+```
+iptables -t nat -L POSTROUTING --line-numbers
+```
+
+```
+Chain POSTROUTING (policy ACCEPT)
+num  target     prot opt source               destination         
+1    MASQUERADE  all  --  syn-172-100-016-000.res.spectrum.com/24  anywhere            
+2    MASQUERADE  all  --  172.17.0.0/16        anywhere            
+3    MASQUERADE  tcp  --  syn-172-100-016-002.res.spectrum.com  syn-172-100-016-002.res.spectrum.com  tcp dpt:6901
+4    MASQUERADE  tcp  --  syn-172-100-016-002.res.spectrum.com  syn-172-100-016-002.res.spectrum.com  tcp dpt:5901
+```
+
+## Вставляем в нужную цепочку ПЕРЕД правилом, действие которого надо залогировать
+
+Вставляем в цепочку FORWARD **перед** 3 строкой
+
+```
+iptables -t nat -I POSTROUTING 3 -s 10.0.0.0/8 -p tcp -j LOG --log-prefix "ngate-"
+```
+
+## Проверка вставки
+
+```
+iptables -t nat -L POSTROUTING --line-numbers
+```
+```
+Chain POSTROUTING (policy ACCEPT)
+num  target     prot opt source               destination         
+1    MASQUERADE  all  --  syn-172-100-016-000.res.spectrum.com/24  anywhere            
+2    MASQUERADE  all  --  172.17.0.0/16        anywhere            
+3    LOG        tcp  --  10.0.0.0/8           anywhere             LOG level warning prefix "ngate-"
+4    MASQUERADE  tcp  --  syn-172-100-016-002.res.spectrum.com  syn-172-100-016-002.res.spectrum.com  tcp dpt:6901
+5    MASQUERADE  tcp  --  syn-172-100-016-002.res.spectrum.com  syn-172-100-016-002.res.spectrum.com  tcp dpt:5901
+
+```
+
+## Просмотр логов
+
+```
+grep "ngate-" /var/log/syslog
+```
+
+```
+Nov 18 14:19:30 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203639.243070] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=212.11.155.165 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=54993 DF PROTO=TCP SPT=56478 DPT=443 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:19:41 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203650.270061] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=89.208.157.2 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=56524 DF PROTO=TCP SPT=34580 DPT=993 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:19:41 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203650.296170] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=89.208.157.2 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=3269 DF PROTO=TCP SPT=34590 DPT=993 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:19:41 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203650.331476] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=89.208.157.2 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=52170 DF PROTO=TCP SPT=34596 DPT=993 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:19:41 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203650.354675] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=89.208.157.2 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=35725 DF PROTO=TCP SPT=34600 DPT=993 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:20:30 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203699.246577] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=212.11.155.165 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=2393 DF PROTO=TCP SPT=43572 DPT=443 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:20:33 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203702.552333] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=108.177.14.139 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=38026 DF PROTO=TCP SPT=36514 DPT=443 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:20:40 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203709.275390] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=77.88.21.125 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=28578 DF PROTO=TCP SPT=42698 DPT=143 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:20:55 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203724.586897] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=77.88.21.125 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=31101 DF PROTO=TCP SPT=42698 DPT=993 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov 18 14:21:10 rasian-IdeaPad-Gaming-3-15IMH05 kernel: [203739.294482] ngate-IN= OUT=wlp0s20f3 SRC=10.240.2.37 DST=77.88.21.125 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=7481 DF PROTO=TCP SPT=59268 DPT=143 WINDOW=64240 RES=0x00 SYN URGP=0
+
+```
+
+
+
+
