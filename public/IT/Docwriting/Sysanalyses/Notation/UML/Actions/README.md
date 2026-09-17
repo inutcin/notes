@@ -5,42 +5,93 @@ UML. Диаграмма деятельности
 
 ## Код
 
+### Вариант 1. Алиасы в квадратных скобках
+
 ```
 flowchart TD
-    Start([Начало]) --> A[Поступление заявки]
-    A --> B[Регистрация заявки]
-    B --> C{Заявка корректна?}
-    C -->|нет| K[Возврат заявки<br>на уточнение]
-    K --> Stop([Конец])
-    C -->|да| D[Проверка данных]
-    D --> E[Проверка документов]
-    E --> F{Проверки<br>пройдены?}
-    F -->|нет| I[Отклонение заявки]
-    I --> J[Уведомление<br>об отказе]
-    J --> Stop
-    F -->|да| G[Принятие заявки]
-    G --> H[Уведомление заявителя]
-    H --> Stop
+    Start([Начало]) --> ApplicationReceived[Поступление заявки]
+    ApplicationReceived --> ApplicationRegistered[Регистрация заявки]
+    ApplicationRegistered --> IsApplicationValid{Заявка корректна?}
+    IsApplicationValid -->|нет| ReturnedForClarification[Возврат заявки<br>на уточнение]
+    ReturnedForClarification --> End([Конец])
+    IsApplicationValid -->|да| DataCheck[Проверка данных]
+    DataCheck --> DocumentCheck[Проверка документов]
+    DocumentCheck --> AreChecksPassed{Проверки<br>пройдены?}
+    AreChecksPassed -->|нет| ApplicationRejected[Отклонение заявки]
+    ApplicationRejected --> RejectionNoticeSent[Уведомление<br>об отказе]
+    RejectionNoticeSent --> End
+    AreChecksPassed -->|да| ApplicationAccepted[Принятие заявки]
+    ApplicationAccepted --> ApplicantNotified[Уведомление заявителя]
+    ApplicantNotified --> End
+```
+
+### Вариант 2. Алиасы в разделе определений
+
+```
+flowchart TD
+    Start([Начало])
+    ApplicationReceived[Поступление заявки]
+    ApplicationRegistered[Регистрация заявки]
+    IsApplicationValid{Заявка корректна?}
+    ReturnedForClarification[Возврат заявки<br>на уточнение]
+    DataCheck[Проверка данных]
+    DocumentCheck[Проверка документов]
+    AreChecksPassed{Проверки<br>пройдены?}
+    ApplicationRejected[Отклонение заявки]
+    RejectionNoticeSent[Уведомление<br>об отказе]
+    ApplicationAccepted[Принятие заявки]
+    ApplicantNotified[Уведомление заявителя]
+    End([Конец])
+
+    Start --> ApplicationReceived
+    ApplicationReceived --> ApplicationRegistered
+    ApplicationRegistered --> IsApplicationValid
+    IsApplicationValid -->|нет| ReturnedForClarification
+    ReturnedForClarification --> End
+    IsApplicationValid -->|да| DataCheck
+    DataCheck --> DocumentCheck
+    DocumentCheck --> AreChecksPassed
+    AreChecksPassed -->|нет| ApplicationRejected
+    ApplicationRejected --> RejectionNoticeSent
+    RejectionNoticeSent --> End
+    AreChecksPassed -->|да| ApplicationAccepted
+    ApplicationAccepted --> ApplicantNotified
+    ApplicantNotified --> End
 ```
 
 ## Вид диаграммы в GitHub или Gitlab
 (Если поддерживается плагин)
+
 ```mermaid
 flowchart TD
-    Start([Начало]) --> A[Поступление заявки]
-    A --> B[Регистрация заявки]
-    B --> C{Заявка корректна?}
-    C -->|нет| K[Возврат заявки<br>на уточнение]
-    K --> Stop([Конец])
-    C -->|да| D[Проверка данных]
-    D --> E[Проверка документов]
-    E --> F{Проверки<br>пройдены?}
-    F -->|нет| I[Отклонение заявки]
-    I --> J[Уведомление<br>об отказе]
-    J --> Stop
-    F -->|да| G[Принятие заявки]
-    G --> H[Уведомление заявителя]
-    H --> Stop
+    Start([Начало])
+    ApplicationReceived[Поступление заявки]
+    ApplicationRegistered[Регистрация заявки]
+    IsApplicationValid{Заявка корректна?}
+    ReturnedForClarification[Возврат заявки<br>на уточнение]
+    DataCheck[Проверка данных]
+    DocumentCheck[Проверка документов]
+    AreChecksPassed{Проверки<br>пройдены?}
+    ApplicationRejected[Отклонение заявки]
+    RejectionNoticeSent[Уведомление<br>об отказе]
+    ApplicationAccepted[Принятие заявки]
+    ApplicantNotified[Уведомление заявителя]
+    End([Конец])
+
+    Start --> ApplicationReceived
+    ApplicationReceived --> ApplicationRegistered
+    ApplicationRegistered --> IsApplicationValid
+    IsApplicationValid -->|нет| ReturnedForClarification
+    ReturnedForClarification --> End
+    IsApplicationValid -->|да| DataCheck
+    DataCheck --> DocumentCheck
+    DocumentCheck --> AreChecksPassed
+    AreChecksPassed -->|нет| ApplicationRejected
+    ApplicationRejected --> RejectionNoticeSent
+    RejectionNoticeSent --> End
+    AreChecksPassed -->|да| ApplicationAccepted
+    ApplicationAccepted --> ApplicantNotified
+    ApplicantNotified --> End
 ```
 
 ## Изображение диаграммы
