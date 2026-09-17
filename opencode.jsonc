@@ -1,0 +1,52 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+  ],
+  "provider": {
+    "gigachat": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "GigaChat AI",
+      "options": {
+        "baseURL": "http://localhost:8880/v1"
+      },
+      "models": {
+        "GigaChat-2-Max": {
+          "name": "GigaChat Max"
+        },
+        "GigaChat-2": {
+          "name": "GigaChat Lite"
+        }
+      }
+    },
+    "deepseek": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek",
+      "options": {
+          "setCacheKey": true
+      },
+      "models": {
+        "deepseek-flash": {
+          "name": "DeepSeek Flash"
+        }
+      }
+    }
+  },
+  "mcp": {
+    "jira": {
+      "type": "local",
+      "command": [
+        "npx", "-y", "mcp-jira-server"
+      ],
+      "environment": {
+        "JIRA_BASE_URL": "https://jira.mos.ru"
+      },
+      "enabled": true,
+      "timeout": 60000
+    }
+    
+  },
+  "model": "deepseek/deepseek-flash",
+  "small_model": "deepseek/deepseek-flash",
+  "default_agent": "brainstorm"
+}
+
