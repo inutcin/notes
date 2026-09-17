@@ -1,0 +1,19 @@
+@startuml "staste_dia_01"
+
+state "Открыта" as Opened
+state "В работе" as InProgress
+state "На проверке" as InReview
+state "Возвращена" as Reopened
+state "Проверена" as Passed
+state "Закрыта" as Closed
+
+[*] --> Opened : постановка
+Opened --> InProgress : назначение
+InProgress --> InReview : отправка на проверку
+InReview --> Reopened : Переоткрытие
+Reopened --> InProgress : Повторное\nвзятие\nв работу
+InReview --> Passed : Одобрение
+Passed --> Closed : Закрытие
+Closed --> [*]
+
+@enduml
