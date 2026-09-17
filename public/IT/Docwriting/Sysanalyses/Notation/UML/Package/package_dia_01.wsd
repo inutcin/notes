@@ -1,0 +1,17 @@
+@startuml "package_dia_01"
+
+package "Пользователи" {
+  class Applicant
+  class Operator
+}
+
+package "Заявки" {
+  class Application
+  class Status
+  Application ..> Status
+}
+
+Applicant --> Application
+Operator --> Application
+
+@enduml

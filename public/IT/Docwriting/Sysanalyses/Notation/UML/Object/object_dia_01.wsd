@@ -1,0 +1,21 @@
+@startuml "object_dia_01"
+
+object "заявитель_1 : Заявитель" as Applicant1 {
+  id = 1
+  name = "Иванов И.И."
+}
+
+object "заявка_1 : Заявка" as Application1 {
+  id = 10
+  status = "На проверке"
+}
+
+object "статус_1 : Статус" as Status1 {
+  id = 3
+  name = "На проверке"
+}
+
+Applicant1 --> Application1 : подаёт
+Application1 --> Status1 : имеет
+
+@enduml

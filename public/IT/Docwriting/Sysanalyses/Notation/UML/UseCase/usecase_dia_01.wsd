@@ -1,0 +1,17 @@
+@startuml "usecase_dia_01"
+left to right direction
+
+actor "Заявитель" as Applicant
+actor "Оператор" as Operator
+
+usecase "Подать заявку" as SubmitApplication
+usecase "Посмотреть статус" as ViewStatus
+usecase "Рассмотреть заявку" as ReviewApplication
+usecase "Уведомить заявителя" as NotifyApplicant
+
+Applicant --> SubmitApplication
+Applicant --> ViewStatus
+Operator --> ReviewApplication
+ReviewApplication --> NotifyApplicant
+
+@enduml

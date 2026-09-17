@@ -1,0 +1,18 @@
+@startuml "deployment_dia_01"
+
+node "Клиент" {
+  artifact "Браузер" as Browser
+}
+
+node "Сервер приложений" {
+  component "Application Server" as AppServer
+  artifact "backend.jar" as Backend
+}
+
+database "PostgreSQL" as Database
+
+Browser --> AppServer : HTTPS
+AppServer --> Backend
+AppServer --> Database
+
+@enduml

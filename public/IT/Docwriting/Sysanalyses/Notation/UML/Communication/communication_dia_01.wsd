@@ -1,0 +1,15 @@
+@startuml "communication_dia_01"
+
+object "Заявитель" as Applicant
+object "ApplicationService" as ApplicationService
+object "Repository" as Repository
+object "Notifier" as Notifier
+
+Applicant --> ApplicationService : 1: Подать заявку
+ApplicationService --> Repository : 2: Сохранить
+Repository --> ApplicationService : 3: Заявка
+ApplicationService --> Notifier : 4: Уведомить
+Notifier --> ApplicationService : 5: Подтверждение
+ApplicationService --> Applicant : 6: Результат
+
+@enduml

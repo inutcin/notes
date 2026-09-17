@@ -1,0 +1,20 @@
+@startuml "timing_dia_01"
+robust "Заявка" as Application
+concise "Оператор" as Operator
+
+@0
+Application is "Открыта"
+Operator is "Ожидает"
+
+@2
+Application is "На проверке"
+Operator is "Проверяет"
+
+@5
+Application is "Проверена"
+Operator is "Ожидает"
+
+@7
+Application is "Закрыта"
+
+@enduml

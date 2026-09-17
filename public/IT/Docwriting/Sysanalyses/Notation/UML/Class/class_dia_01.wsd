@@ -1,0 +1,24 @@
+@startuml "class_dia_01"
+
+class Applicant {
+  +int id
+  +string name
+  +submit() : void
+}
+
+class Application {
+  +int id
+  +string status
+  +register() : void
+  +approve() : void
+}
+
+class Status {
+  +int id
+  +string name
+}
+
+Applicant "1" --> "*" Application : подаёт
+Application "*" --> "1" Status : имеет
+
+@enduml

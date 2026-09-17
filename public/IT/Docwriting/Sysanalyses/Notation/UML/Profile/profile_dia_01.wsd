@@ -1,0 +1,10 @@
+@startuml "profile_dia_01"
+
+class "Class" as MetaClass
+class "Entity" as Entity <<stereotype>>
+class "Service" as Service <<stereotype>>
+
+Entity .up.> MetaClass : extends
+Service .up.> MetaClass : extends
+
+@enduml

@@ -1,0 +1,14 @@
+@startuml "composite_dia_01"
+
+component "ApplicationService" {
+  portin "request" as PortIn
+  portout "event" as PortOut
+  component "ApplicationCore" as ApplicationCore
+  component "Repository" as Repository
+
+  PortIn --> ApplicationCore
+  ApplicationCore --> Repository
+  ApplicationCore --> PortOut
+}
+
+@enduml

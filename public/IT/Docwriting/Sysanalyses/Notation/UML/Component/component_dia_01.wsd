@@ -1,0 +1,14 @@
+@startuml "component_dia_01"
+
+component "Web UI" as WebUI
+component "API Gateway" as ApiGateway
+component "Application Service" as ApplicationService
+component "Notification Service" as NotificationService
+database "База данных" as Database
+
+WebUI --> ApiGateway
+ApiGateway --> ApplicationService
+ApplicationService --> Database
+ApplicationService --> NotificationService
+
+@enduml

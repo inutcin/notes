@@ -1,0 +1,13 @@
+@startuml "interaction_dia_01"
+
+start
+:ref: Подача заявки;
+:ref: Рассмотрение заявки;
+if (Заявка принята?) then (да)
+  :ref: Уведомление о принятии;
+else (нет)
+  :ref: Уведомление об отказе;
+endif
+stop
+
+@enduml
